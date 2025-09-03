@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>British Voice Partner</title>
+    <meta name="theme-color" content="#1CB0F6" />
+    <style>
+      :root {
+        --duo-blue: #1CB0F6;
+        --duo-green: #58CC02;
+        --duo-red: #FF4B4B;
+        --duo-yellow: #FFC800;
+        --duo-purple: #CE82FF;
+        --duo-orange: #FF9600;
+        --bg-main: #131F24;
+        --bg-secondary: #0F1419;
+        --bg-card: #1A252B;
+        --text-primary: #FFFFFF;
+        --text-secondary: #B7C4CF;
+        --text-muted: #8B9BA8;
+        --border: rgba(255, 255, 255, 0.1);
+        --shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+      }
+      
+      * { box-sizing: border-box; }
+      
+      html, body, #root { height: 100%; margin: 0; padding: 0; }
+      
+      body {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, var(--bg-main) 0%, var(--bg-secondary) 100%);
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
+      
+      .duolingo-card {
+        background: var(--bg-card);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 24px;
+        transition: all 0.3s ease;
+      }
+      
+      .duolingo-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      }
+      
+      .duo-button {
+        background: linear-gradient(180deg, var(--duo-blue) 0%, #1899D6 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 16px 24px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 0 #1899D6;
+      }
+      
+      .duo-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 0 #1899D6;
+      }
+      
+      .duo-button:active {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 #1899D6;
+      }
+      
+      .duo-button.green {
+        background: linear-gradient(180deg, var(--duo-green) 0%, #4EA500 100%);
+        box-shadow: 0 4px 0 #4EA500;
+      }
+      
+      .duo-button.green:hover {
+        box-shadow: 0 5px 0 #4EA500;
+      }
+      
+      .duo-button.green:active {
+        box-shadow: 0 2px 0 #4EA500;
+      }
+      
+      .duo-button.red {
+        background: linear-gradient(180deg, var(--duo-red) 0%, #E63946 100%);
+        box-shadow: 0 4px 0 #E63946;
+      }
+      
+      .progress-bar {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        height: 16px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+      
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--duo-green) 0%, var(--duo-blue) 100%);
+        border-radius: 12px;
+        transition: width 0.5s ease;
+      }
+      
+      .nav-header {
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--duo-blue);
+      }
+      
+      .nav-tabs {
+        display: flex;
+        gap: 8px;
+      }
+      
+      .nav-tab {
+        padding: 12px 16px;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+      }
+      
+      .nav-tab.active {
+        background: var(--duo-blue);
+        color: white;
+        border-color: var(--duo-blue);
+      }
+      
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        min-height: calc(100vh - 100px);
+      }
+      
+      .grid {
+        display: grid;
+        gap: 24px;
+        grid-template-columns: 1fr;
+      }
+      
+      @media (min-width: 768px) {
+        .grid.two-col {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 16px 0;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .input-field {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+        color: var(--text-primary);
+        font-size: 16px;
+        width: 100%;
+        transition: border-color 0.2s ease;
+      }
+      
+      .input-field:focus {
+        outline: none;
+        border-color: var(--duo-blue);
+      }
+      
+      .textarea-field {
+        min-height: 120px;
+        resize: vertical;
+      }
+      
+      .streak-counter {
+        background: linear-gradient(135deg, var(--duo-orange) 0%, var(--duo-yellow) 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+      }
+      
+      .waveform-container {
+        background: var(--bg-secondary);
+        border-radius: 12px;
+        padding: 16px;
+        border: 1px solid var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
