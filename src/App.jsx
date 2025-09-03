@@ -1,232 +1,222 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  GraduationCap, 
+  Volume2, 
+  BookOpen, 
+  HelpCircle, 
+  Settings, 
+  Trophy,
+  Mic,
+  PlayCircle,
+  Menu,
+  X
+} from 'lucide-react'
+import { US, GB } from 'country-flag-icons/react/3x2'
 
-export default function App() {
-  const [partnerText, setPartnerText] = useState('Hello! I am your British voice partner.')
-  const [config, setConfig] = useState({ 
-    accent: 'RP', 
-    persona: 'rp_plain', 
-    speed: 1.0, 
-    pitch: 1.0, 
-    gender: 'any', 
-    voiceHint: '' 
-  })
+// Import pages
+import HomePage from './pages/HomePage.jsx'
+import PracticePage from './pages/PracticePage.jsx'
+import LessonsPage from './pages/LessonsPage.jsx'
+import HelpPage from './pages/HelpPage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 
-  const speak = (text) => {
-    if (!text?.trim()) return
-    const utterance = new SpeechSynthesisUtterance(text)
-    utterance.lang = 'en-GB'
-    utterance.rate = config.speed || 1.0
-    utterance.pitch = config.pitch || 1.0
-    window.speechSynthesis.speak(utterance)
-  }
+function Navigation({ onMobileMenuToggle }) {
+  const location = useLocation()
+  
+  const navItems = [
+    { path: '/', icon: BookOpen, label: 'Lessons', color: '#CE82FF' },
+    { path: '/practice', icon: Mic, label: 'Practice', color: '#58CC02' },
+    { path: '/progress', icon: GraduationCap, label: 'Progress', color: '#1CB0F6' },
+    { path: '/help', icon: HelpCircle, label: 'Help', color: '#FFC800' },
+    { path: '/settings', icon: Settings, label: 'Settings', color: '#FF9600' }
+  ]
+  
+  return (
+    <nav className="nav-container">
+      <div className="nav-content">
+        <div className="logo-section">
+          <BookOpen size={32} color="#CE82FF" />
+          <span className="logo-text">British Pronunciation</span>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginLeft: '16px' }}>
+            <US className="flag-icon" />
+            <span style={{ color: '#778DA9', fontSize: '14px' }}>→</span>
+            <GB className="flag-icon" />
+          </div>
+        </div>
+        
+        <div className="nav-tabs">
+          {navItems.map(({ path, icon: Icon, label, color }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`nav-tab ${location.pathname === path ? 'active' : ''}`}
+            >
+              <Icon size={16} color={location.pathname === path ? 'white' : color} />
+              {label}
+            </Link>
+          ))}
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div className="desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Trophy size={20} color="#FFC800" />
+            <span style={{ color: '#FFC800', fontWeight: '600' }}>Level 3</span>
+          </div>
+          
+          <button 
+            className="mobile-menu-toggle"
+            onClick={onMobileMenuToggle}
+          >
+            <Menu size={24} />
+          </button>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+function PageTransition({ children }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+    >
+      {children}
+    </motion.div>
+  )
+}
+
+function MobileMenu({ isOpen, onClose }) {
+  const location = useLocation()
+  
+  const navItems = [
+    { path: '/', icon: BookOpen, label: 'Lessons', color: '#CE82FF' },
+    { path: '/practice', icon: Mic, label: 'Practice', color: '#58CC02' },
+    { path: '/progress', icon: GraduationCap, label: 'Progress', color: '#1CB0F6' },
+    { path: '/help', icon: HelpCircle, label: 'Help', color: '#FFC800' },
+    { path: '/settings', icon: Settings, label: 'Settings', color: '#FF9600' }
+  ]
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', fontFamily: 'system-ui' }}>
-      <header style={{ 
-        background: 'var(--bg-card)', 
-        padding: '16px 24px', 
-        borderRadius: '16px', 
-        marginBottom: '24px',
-        textAlign: 'center'
-      }}>
-        <h1 style={{ 
-          margin: 0, 
-          fontSize: '32px', 
-          fontWeight: '700', 
-          color: '#1CB0F6' 
-        }}>
-          🎭 British Voice Partner
-        </h1>
-        <p style={{ 
-          margin: '8px 0 0 0', 
-          color: '#B7C4CF',
-          fontSize: '18px'
-        }}>
-          Master your British accent with Duolingo-style lessons
-        </p>
-      </header>
-
-      <main style={{ 
-        maxWidth: '800px', 
-        margin: '0 auto',
-        display: 'grid',
-        gap: '24px'
-      }}>
-        <div className="duolingo-card">
-          <h2 style={{ 
-            color: '#1CB0F6', 
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            🔊 Voice Settings
-          </h2>
-          
-          <div style={{ display: 'grid', gap: '16px' }}>
-            <div>
-              <label style={{ 
-                display: 'block', 
-                marginBottom: '8px', 
-                fontWeight: '600', 
-                color: '#B7C4CF' 
-              }}>
-                Text to Practice
-              </label>
-              <textarea
-                className="input-field textarea-field"
-                value={partnerText}
-                onChange={(e) => setPartnerText(e.target.value)}
-                placeholder="Enter text to practice your British accent..."
-                style={{ minHeight: '120px' }}
-              />
-            </div>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: '8px', 
-                  fontWeight: '600', 
-                  color: '#B7C4CF' 
-                }}>
-                  Speed: {config.speed}x
-                </label>
-                <input
-                  type="range"
-                  min="0.5"
-                  max="1.5"
-                  step="0.1"
-                  value={config.speed}
-                  onChange={(e) => setConfig(prev => ({ ...prev, speed: parseFloat(e.target.value) }))}
-                  style={{ width: '100%' }}
-                />
-              </div>
-              <div>
-                <label style={{ 
-                  display: 'block', 
-                  marginBottom: '8px', 
-                  fontWeight: '600', 
-                  color: '#B7C4CF' 
-                }}>
-                  Pitch: {config.pitch}
-                </label>
-                <input
-                  type="range"
-                  min="0.7"
-                  max="1.3"
-                  step="0.1"
-                  value={config.pitch}
-                  onChange={(e) => setConfig(prev => ({ ...prev, pitch: parseFloat(e.target.value) }))}
-                  style={{ width: '100%' }}
-                />
-              </div>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <button 
-                className="duo-button"
-                onClick={() => speak(partnerText)}
-              >
-                🔊 Play British Accent
-              </button>
-              <button 
-                className="duo-button green"
-                onClick={() => setPartnerText('Hello! I am practicing my British accent. How do I sound?')}
-              >
-                📝 Sample Text
-              </button>
-            </div>
-          </div>
+    <>
+      <div 
+        className={`mobile-menu-overlay ${isOpen ? 'active' : ''}`} 
+        onClick={onClose}
+      />
+      <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
+        <div className="mobile-menu-header">
+          <h3 style={{ color: 'white', margin: 0, fontSize: '18px' }}>Navigation</h3>
+          <button 
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}
+          >
+            <X size={24} />
+          </button>
         </div>
-
-        <div className="duolingo-card">
-          <h2 style={{ 
-            color: '#58CC02', 
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            🎯 Quick Practice
-          </h2>
-          
-          <div style={{ display: 'grid', gap: '16px' }}>
-            {[
-              "The car is parked in the yard",
-              "I thought I caught the ball",
-              "Would you like a cup of tea?",
-              "The weather is rather lovely today"
-            ].map((text, index) => (
-              <div 
-                key={index}
-                style={{
-                  padding: '16px',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  borderRadius: '12px',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center'
-                }}
-              >
-                <span style={{ fontStyle: 'italic', color: '#FFFFFF' }}>
-                  "{text}"
-                </span>
-                <button 
-                  className="duo-button"
-                  style={{ padding: '8px 16px', fontSize: '14px' }}
-                  onClick={() => speak(text)}
-                >
-                  🔊 Play
-                </button>
-              </div>
-            ))}
-          </div>
+        
+        <div className="mobile-nav-items">
+          {navItems.map(({ path, icon: Icon, label, color }) => (
+            <Link
+              key={path}
+              to={path}
+              className={`mobile-nav-item ${location.pathname === path ? 'active' : ''}`}
+              onClick={onClose}
+            >
+              <Icon size={20} color={location.pathname === path ? 'white' : color} />
+              {label}
+            </Link>
+          ))}
         </div>
+      </div>
+    </>
+  )
+}
 
-        <div className="duolingo-card">
-          <h2 style={{ 
-            color: '#CE82FF', 
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            💡 British Accent Tips
-          </h2>
-          
-          <div style={{ display: 'grid', gap: '12px' }}>
-            <div style={{ 
-              padding: '12px', 
-              background: 'rgba(28, 176, 246, 0.1)', 
-              borderRadius: '8px',
-              border: '1px solid #1CB0F6'
-            }}>
-              <strong style={{ color: '#1CB0F6' }}>Non-rhotic R:</strong>
-              <span style={{ color: '#FFFFFF' }}> Don't pronounce R at the end of words (car → "cah")</span>
-            </div>
-            <div style={{ 
-              padding: '12px', 
-              background: 'rgba(88, 204, 2, 0.1)', 
-              borderRadius: '8px',
-              border: '1px solid #58CC02'
-            }}>
-              <strong style={{ color: '#58CC02' }}>Long A sound:</strong>
-              <span style={{ color: '#FFFFFF' }}> "Bath", "dance", "ask" use the broad "ah" sound</span>
-            </div>
-            <div style={{ 
-              padding: '12px', 
-              background: 'rgba(206, 130, 255, 0.1)', 
-              borderRadius: '8px',
-              border: '1px solid #CE82FF'
-            }}>
-              <strong style={{ color: '#CE82FF' }}>T pronunciation:</strong>
-              <span style={{ color: '#FFFFFF' }}> Crisp T sounds, not the American "d" sound</span>
-            </div>
-          </div>
-        </div>
+function AppContent() {
+  const [config, setConfig] = useState({
+    accent: 'RP',
+    speed: 1.0,
+    pitch: 1.0,
+    voice: 'british'
+  })
+  
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  
+  const toggleMobileMenu = () => setMobileMenuOpen(true)
+  const closeMobileMenu = () => setMobileMenuOpen(false)
+
+  return (
+    <div className="app">
+      <Navigation onMobileMenuToggle={toggleMobileMenu} />
+      
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <PageTransition>
+                  <LessonsPage config={config} setConfig={setConfig} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/progress" 
+              element={
+                <PageTransition>
+                  <HomePage config={config} setConfig={setConfig} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/practice" 
+              element={
+                <PageTransition>
+                  <PracticePage config={config} setConfig={setConfig} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/lessons" 
+              element={
+                <PageTransition>
+                  <LessonsPage config={config} setConfig={setConfig} />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/help" 
+              element={
+                <PageTransition>
+                  <HelpPage />
+                </PageTransition>
+              } 
+            />
+            <Route 
+              path="/settings" 
+              element={
+                <PageTransition>
+                  <SettingsPage config={config} setConfig={setConfig} />
+                </PageTransition>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
       </main>
+      
+      <MobileMenu isOpen={mobileMenuOpen} onClose={closeMobileMenu} />
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   )
 }
