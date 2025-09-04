@@ -181,14 +181,6 @@ function AppContent() {
               } 
             />
             <Route 
-              path="/lessons" 
-              element={
-                <PageTransition>
-                  <LessonsPage config={config} setConfig={setConfig} />
-                </PageTransition>
-              } 
-            />
-            <Route 
               path="/help" 
               element={
                 <PageTransition>
