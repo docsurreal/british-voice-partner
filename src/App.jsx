@@ -94,9 +94,9 @@ function MobileMenu({ isOpen, onClose }) {
   const location = useLocation()
   
   const navItems = [
-    { path: '/', icon: BookOpen, label: 'Lessons', color: '#CE82FF' },
+    { path: '/', icon: GraduationCap, label: 'Progress', color: '#1CB0F6' },
+    { path: '/lessons', icon: BookOpen, label: 'Lessons', color: '#CE82FF' },
     { path: '/practice', icon: Mic, label: 'Practice', color: '#58CC02' },
-    { path: '/progress', icon: GraduationCap, label: 'Progress', color: '#1CB0F6' },
     { path: '/help', icon: HelpCircle, label: 'Help', color: '#FFC800' },
     { path: '/settings', icon: Settings, label: 'Settings', color: '#FF9600' }
   ]
